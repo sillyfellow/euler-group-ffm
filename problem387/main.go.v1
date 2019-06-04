@@ -1,0 +1,75 @@
+package main
+
+import (
+	"fmt"
+	"math"
+
+	"github.com/kavehmz/prime"
+)
+
+var maxLimit uint64
+var primes map[uint64]bool
+var plist []uint64
+
+func init() {
+	maxLimit = uint64(math.Pow10(4))
+	plist = prime.Primes(1 + uint64(maxLimit))
+	fmt.Printf("Size of Plist is: %d\n", len(plist))
+	primes = map[uint64]bool{}
+	for _, p := range plist {
+		primes[p] = true
+	}
+}
+
+func isPrime(n uint64) bool {
+	_, found := primes[n]
+	return found
+}
+
+func sumOfDigits(n uint64) (sum uint64) {
+	var d uint64
+	for n > 0 {
+		d = n % 10
+		n = n / 10
+		sum += d
+	}
+	return
+}
+
+func isHarshadNum(n uint64) bool {
+	return n != 0 && (n < 10 || n%sumOfDigits(n) == 0)
+}
+
+func isRightTruncatableHarshadNum(n uint64) bool {
+	if n < 10 {
+		return true
+	}
+
+	return isHarshadNum(n) && isRightTruncatableHarshadNum(n/10)
+}
+
+func isStrongHarshadNumber(n uint64) bool {
+	return isHarshadNum(n) && isPrime(n/sumOfDigits(n))
+}
+
+func isStrongRightTruncatableHN(n uint64) bool {
+	return isStrongHarshadNumber(n) && isRightTruncatableHarshadNum(n)
+}
+
+func sumOfSRTHN(limit uint64) (sum uint64) {
+	for _, number := range plist {
+		if number >= limit {
+			break
+		}
+		if isStrongRightTruncatableHN(number / 10) {
+			fmt.Printf("%d\n", number)
+			sum += number
+		}
+	}
+
+	return
+}
+
+func main() {
+	fmt.Printf("90619 ==? %d\n", sumOfSRTHN(maxLimit))
+}
