@@ -6,7 +6,7 @@ import (
 	"math/big"
 )
 
-var maxLimit = int64(math.Pow10(4))
+var maxLimit = int64(math.Pow10(14))
 
 var isRightTruncatableHarshadNumCache = map[int64]bool{}
 var maxCached int64
@@ -64,7 +64,7 @@ func isStrongHarshadNumber(n int64) bool {
 }
 
 func recursiveBuilder(n int64) int64 {
-	fmt.Printf("something: %d\n", n)
+	//fmt.Printf("something: %d\n", n)
 	if n > maxLimit {
 		return 0
 	}
@@ -72,10 +72,11 @@ func recursiveBuilder(n int64) int64 {
 	n10 := n * 10
 	for i = 0; i <= 9; i++ {
 		j := n10 + i
-		if isStrongHarshadNumber(j) {
+		if isRightTruncatableHarshadNum(j) {
 			sum += recursiveBuilder(j)
 		} else {
-			if isPrime(j) {
+			if j <= maxLimit && isPrime(j) && isStrongHarshadNumber(n) {
+				fmt.Printf("j: %d\n", j)
 				sum += j
 			}
 		}
@@ -102,7 +103,7 @@ func sumOfSRTHN(limit int64) (sum int64) {
 func main() {
 	//fmt.Printf("90619 ==? %d\n", sumOfSRTHN(int64(math.Pow10(4))))
 	var sum int64
-	for i := 0; i <= 9; i++ {
+	for i := 1; i <= 9; i++ {
 		s := recursiveBuilder(int64(i))
 		sum += int64(s)
 	}
